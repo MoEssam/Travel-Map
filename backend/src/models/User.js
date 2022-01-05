@@ -37,4 +37,31 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+//Hash the plain text password before saving
+userSchema.pre("save", async function (next) {
+  const user = this;
+
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+
+  next();
+});
+
+UserSchema.statics.findByCredentials = async (username, password) => {
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    throw new Error("Unable to login");
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    throw new Error("Unable to login");
+  }
+
+  return user;
+};
+
 module.exports = mongoose.model("User", UserSchema);
