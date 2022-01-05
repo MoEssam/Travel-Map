@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validtaor = require("validator");
 
-const UserSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -48,7 +48,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-UserSchema.statics.findByCredentials = async (username, password) => {
+userSchema.statics.findByCredentials = async (username, password) => {
   const user = await User.findOne({ username });
 
   if (!user) {
