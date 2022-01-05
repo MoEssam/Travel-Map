@@ -40,17 +40,14 @@ const userSchema = new mongoose.Schema(
 //Hash the plain text password before saving
 userSchema.pre("save", async function (next) {
   const user = this;
-
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 8);
   }
-
   next();
 });
 
 userSchema.statics.findByCredentials = async (username, password) => {
   const user = await User.findOne({ username });
-
   if (!user) {
     throw new Error("Unable to login");
   }
@@ -60,7 +57,6 @@ userSchema.statics.findByCredentials = async (username, password) => {
   if (!isMatch) {
     throw new Error("Unable to login");
   }
-
   return user;
 };
 
